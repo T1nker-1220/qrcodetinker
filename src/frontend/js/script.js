@@ -6,11 +6,11 @@
 // API endpoint for the QR code generation
 const isProduction = window.location.hostname !== 'localhost';
 const API_ENDPOINT = isProduction 
-  ? '/api/generate'  // Relative URL that works on any domain
-  : 'http://localhost:5000/api/generate';
+  ? 'https://qrcodetinker.vercel.app//api/generate'
+  : 'http://127.0.0.1:5000/api/generate';
 const DOWNLOAD_ENDPOINT = isProduction
-  ? '/api/download'  // Relative URL that works on any domain
-  : 'http://localhost:5000/api/download';
+  ? 'https://qrcodetinker.vercel.app/api/download'
+  : 'http://127.0.0.1:5000/api/download';
 
 // DOM Elements
 document.addEventListener('DOMContentLoaded', () => {
