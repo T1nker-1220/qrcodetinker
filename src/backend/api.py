@@ -73,15 +73,20 @@ def index():
     """Serve the frontend index.html file."""
     return send_from_directory('../frontend/html', 'index.html')
 
+@app.route('/css/<path:filename>')
+def serve_css(filename):
+    """Serve CSS files."""
+    return send_from_directory('../frontend/css', filename)
+
+@app.route('/js/<path:filename>')
+def serve_js(filename):
+    """Serve JavaScript files."""
+    return send_from_directory('../frontend/js', filename)
+
 @app.route('/<path:path>')
 def serve_static(path):
     """Serve static files from the frontend directory."""
-    if path.startswith('css/'):
-        return send_from_directory('../frontend', path)
-    elif path.startswith('js/'):
-        return send_from_directory('../frontend', path)
-    else:
-        return send_from_directory('../frontend/html', path)
+    return send_from_directory('../frontend/html', path)
 
 
 @app.route('/api/health', methods=['GET'])
