@@ -18,10 +18,10 @@ from flask_cors import CORS
 # Fall back to relative imports (for Vercel deployment)
 try:
     from qr_generator import QRGenerator
-    from qr_generator.utils import format_wifi_data, format_contact_data
+    from qr_generator.utils import format_wifi_data, format_contact_data, format_event_data, format_geo_data, format_email_data
 except ImportError:
     from .qr_generator import QRGenerator
-    from .qr_generator.utils import format_wifi_data, format_contact_data
+    from .qr_generator.utils import format_wifi_data, format_contact_data, format_event_data, format_geo_data, format_email_data
 
 # Environment configuration
 is_production = os.environ.get('ENVIRONMENT', 'development') == 'production'
@@ -116,6 +116,30 @@ def generate_qr():
                 company=company,
                 title=job_title,
                 website=website
+            )
+        elif qr_type == 'event':
+            name = data.get('name', '')
+            start = data.get('start', '')
+            end = data.get('end', '')
+            location = data.get('location', '')
+            content = format_event_data(
+                name=name,
+                start_iso=start,
+                end_iso=end,
+                location=location
+            )
+        elif qr_type == 'geo':
+            latitude = data.get('latitude', '')
+            longitude = data.get('longitude', '')
+            content = format_geo_data(latitude, longitude)
+        elif qr_type == 'email':
+            recipient = data.get('recipient', '')
+            subject = data.get('subject', '')
+            body = data.get('body', '')
+            content = format_email_data(
+                recipient=recipient,
+                subject=subject,
+                body=body
             )
         else:  # custom
             content = data.get('content', '')

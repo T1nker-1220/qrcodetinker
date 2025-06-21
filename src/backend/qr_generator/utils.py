@@ -161,3 +161,102 @@ def format_contact_data(
     vcard.append("END:VCARD")
 
     return "\n".join(vcard)
+
+
+def format_event_data(
+    name: str,
+    start_iso: str,
+    end_iso: Optional[str] = None,
+    location: Optional[str] = None,
+) -> str:
+    """
+    Format calendar event data as a VCALENDAR for QR code generation.
+
+    Args:
+        name: Event name/title
+        start_iso: Start date/time in ISO format (YYYY-MM-DDTHH:MM)
+        end_iso: End date/time in ISO format (optional)
+        location: Event location (optional)
+
+    Returns:
+        Formatted VCALENDAR string
+    """
+    from datetime import datetime
+    
+    def iso_to_ics(dt: str) -> str:
+        """Convert ISO datetime to ICS format."""
+        if not dt:
+            return ''
+        # Parse datetime-local format: YYYY-MM-DDTHH:MM
+        return datetime.strptime(dt, '%Y-%m-%dT%H:%M').strftime('%Y%m%dT%H%M%S')
+    
+    dtstart = iso_to_ics(start_iso)
+    
+    lines = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//QRGenerator//EN',
+        'BEGIN:VEVENT',
+        f'SUMMARY:{name}',
+        f'DTSTART:{dtstart}',
+    ]
+    
+    if end_iso:
+        dtend = iso_to_ics(end_iso)
+        if dtend:
+            lines.append(f'DTEND:{dtend}')
+    
+    if location:
+        lines.append(f'LOCATION:{location}')
+    
+    lines.extend([
+        'END:VEVENT',
+        'END:VCALENDAR'
+    ])
+    
+    return '\n'.join(lines)
+
+
+def format_geo_data(latitude: str, longitude: str) -> str:
+    """
+    Format geolocation data as a geo URI for QR code generation.
+
+    Args:
+        latitude: Latitude coordinate
+        longitude: Longitude coordinate
+
+    Returns:
+        Formatted geo URI string (RFC 5870)
+    """
+    return f'geo:{latitude},{longitude}'
+
+
+def format_email_data(
+    recipient: str,
+    subject: Optional[str] = None,
+    body: Optional[str] = None,
+) -> str:
+    """
+    Format email data as a mailto URI for QR code generation.
+
+    Args:
+        recipient: Email recipient address
+        subject: Email subject (optional)
+        body: Email body text (optional)
+
+    Returns:
+        Formatted mailto URI string
+    """
+    from urllib.parse import quote
+    
+    query_params = []
+    
+    if subject:
+        query_params.append(f'subject={quote(subject)}')
+    
+    if body:
+        query_params.append(f'body={quote(body)}')
+    
+    query_string = ('?' + '&'.join(query_params)) if query_params else ''
+    
+    return f'mailto:{recipient}{query_string}'

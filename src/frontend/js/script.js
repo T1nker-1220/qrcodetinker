@@ -29,6 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlForm = document.getElementById('url-form');
     const wifiForm = document.getElementById('wifi-form');
     const contactForm = document.getElementById('contact-form');
+    const eventForm = document.getElementById('event-form');
+    const geoForm = document.getElementById('geo-form');
+    const emailForm = document.getElementById('email-form');
     const customForm = document.getElementById('custom-form');
     
     // Result container
@@ -121,6 +124,57 @@ document.addEventListener('DOMContentLoaded', () => {
                 company: company,
                 jobTitle: jobTitle,
                 website: website,
+                title: title
+            });
+        });
+        
+        // Event Form
+        eventForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('event-name').value;
+            const start = document.getElementById('event-start').value;
+            const end = document.getElementById('event-end').value;
+            const location = document.getElementById('event-location').value;
+            const title = document.getElementById('event-title').value || `Event: ${name}`;
+            
+            generateQRCode({
+                type: 'event',
+                name: name,
+                start: start,
+                end: end,
+                location: location,
+                title: title
+            });
+        });
+        
+        // Geolocation Form
+        geoForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const latitude = document.getElementById('geo-latitude').value;
+            const longitude = document.getElementById('geo-longitude').value;
+            const title = document.getElementById('geo-title').value || `Location: ${latitude}, ${longitude}`;
+            
+            generateQRCode({
+                type: 'geo',
+                latitude: latitude,
+                longitude: longitude,
+                title: title
+            });
+        });
+        
+        // Email Form
+        emailForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const recipient = document.getElementById('email-recipient').value;
+            const subject = document.getElementById('email-subject').value;
+            const body = document.getElementById('email-body').value;
+            const title = document.getElementById('email-title').value || `Email: ${recipient}`;
+            
+            generateQRCode({
+                type: 'email',
+                recipient: recipient,
+                subject: subject,
+                body: body,
                 title: title
             });
         });
