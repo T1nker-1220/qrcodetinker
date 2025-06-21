@@ -6,10 +6,10 @@
 // API endpoint for the QR code generation
 const isProduction = window.location.hostname !== 'localhost';
 const API_ENDPOINT = isProduction 
-  ? 'https://your-production-url.com/api/generate'
+  ? '/api/generate'  // Relative URL that works on any domain
   : 'http://localhost:5000/api/generate';
 const DOWNLOAD_ENDPOINT = isProduction
-  ? 'https://your-production-url.com/api/download'
+  ? '/api/download'  // Relative URL that works on any domain
   : 'http://localhost:5000/api/download';
 
 // DOM Elements
