@@ -21,7 +21,12 @@ is_production = os.environ.get('ENVIRONMENT', 'development') == 'production'
 allowed_origins = os.environ.get('ALLOWED_ORIGINS', '*')
 
 app = Flask(__name__, static_folder='../frontend')
-CORS(app, resources={r"/api/*": {"origins": allowed_origins}})
+# Enhanced CORS configuration with explicit options
+CORS(app, 
+     resources={r"/api/*": {"origins": allowed_origins}},
+     supports_credentials=True,
+     allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+     methods=["GET", "POST", "OPTIONS"])
 
 # Create a QR generator instance
 qr_generator = QRGenerator()
@@ -184,7 +189,7 @@ def download_qr(filename):
 
 # For local development
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000)
 
 # For Vercel serverless deployment
 app_handler = app
