@@ -7,3 +7,5 @@ __pycache__/
 tests/
 .env
 .gitignore
+repomix.config.json
+repomix-codebase-qr-code-generator.md
