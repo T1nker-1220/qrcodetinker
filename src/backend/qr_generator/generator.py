@@ -4,8 +4,12 @@ Core QR code generation functionality.
 
 import os
 import qrcode
+import logging
 from PIL import Image, ImageDraw, ImageFont
 from typing import Optional, Tuple, Union
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
 class QRGenerator:
@@ -82,7 +86,13 @@ class QRGenerator:
             img = qr_img
             
         # Ensure the directory exists
-        os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+        try:
+            output_dir = os.path.dirname(os.path.abspath(output_path))
+            if output_dir and not os.path.exists(output_dir):
+                os.makedirs(output_dir, exist_ok=True)
+                logger.info(f"Created directory: {output_dir}")
+        except Exception as e:
+            logger.warning(f"Failed to create directory: {str(e)}")
 
         # Save the image
         img.save(output_path)
@@ -191,30 +201,47 @@ class QRGenerator:
                 pixel = img.getpixel((x, y))
                 new_img.putpixel((x, y + title_height), pixel)
         
-        # Try to use a larger font
+        # Use a default font that doesn't rely on system fonts
         font_size = 30
         try:
-            # Try common system fonts
-            if os.name == 'nt':  # Windows
-                font = ImageFont.truetype("arial.ttf", font_size)
-            else:  # Linux/Mac
-                font = ImageFont.truetype("DejaVuSans.ttf", font_size)
-        except:
-            # Fall back to default
+            # Try to use a default font that should be available in most environments
             font = ImageFont.load_default()
+            logger.info("Using default font for QR code title")
+        except Exception as e:
+            logger.warning(f"Failed to load font: {str(e)}")
+            # Create a very basic font fallback
+            font = None
         
-        # Try to center the text
-        try:
-            # For newer Pillow versions
-            text_width = draw.textlength(title, font=font)
-        except AttributeError:
-            # Fallback for older Pillow versions
-            text_width = font.getsize(title)[0]
-        
-        text_x = (qr_width - text_width) // 2
-        text_y = (title_height - font_size) // 2  # Center vertically in title area
-        
-        # Draw the title
-        draw.text((text_x, text_y), title, fill=self.default_title_text_color, font=font)
+        # Center and draw the text
+        if font:
+            try:
+                # Try to center the text
+                try:
+                    # For newer Pillow versions
+                    text_width = draw.textlength(title, font=font)
+                except AttributeError:
+                    # Fallback for older Pillow versions
+                    try:
+                        text_width = font.getsize(title)[0]
+                    except:
+                        # If all else fails, estimate width
+                        text_width = len(title) * font_size * 0.6
+                
+                text_x = (qr_width - text_width) // 2
+                text_y = (title_height - font_size) // 2  # Center vertically in title area
+                
+                # Draw the title
+                draw.text((text_x, text_y), title, fill=self.default_title_text_color, font=font)
+                logger.info("Added title to QR code image")
+            except Exception as e:
+                # If text rendering fails, log and continue
+                logger.warning(f"Failed to render title text: {str(e)}")
+                # Draw a simple centered text without font
+                draw.text((qr_width // 2, title_height // 2), title, 
+                          fill=self.default_title_text_color, anchor="mm")
+        else:
+            # Simple centered text without font
+            draw.text((qr_width // 2, title_height // 2), title, 
+                      fill=self.default_title_text_color, anchor="mm")
         
         return new_img
