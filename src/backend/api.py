@@ -13,8 +13,15 @@ import tempfile
 import re
 from flask import Flask, request, jsonify, send_from_directory, Response
 from flask_cors import CORS
-from .qr_generator import QRGenerator
-from .qr_generator.utils import format_wifi_data, format_contact_data
+
+# Try absolute imports first (for direct script execution)
+# Fall back to relative imports (for Vercel deployment)
+try:
+    from qr_generator import QRGenerator
+    from qr_generator.utils import format_wifi_data, format_contact_data
+except ImportError:
+    from .qr_generator import QRGenerator
+    from .qr_generator.utils import format_wifi_data, format_contact_data
 
 # Environment configuration
 is_production = os.environ.get('ENVIRONMENT', 'development') == 'production'
