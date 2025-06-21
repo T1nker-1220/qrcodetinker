@@ -4,7 +4,14 @@
  */
 
 // API endpoint for the QR code generation
-const isProduction = window.location.hostname !== 'localhost';
+// Check if we're in a local development environment by looking for common local hostnames
+const isLocalhost = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' ||
+                    window.location.hostname.startsWith('192.168.') ||
+                    window.location.hostname.endsWith('.local') ||
+                    window.location.hostname.indexOf('.') === -1; // No dots usually means local hostname
+
+const isProduction = !isLocalhost;
 const API_ENDPOINT = isProduction 
   ? 'https://qrcodetinker.vercel.app/api/generate'
   : 'http://localhost:5000/api/generate';
