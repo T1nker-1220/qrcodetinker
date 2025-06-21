@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>QR Code Generator</h1>
+            <p>Generate QR codes for URLs, WiFi networks, contact information, and more.</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="url">URL</button>
+            <button class="tab-btn" data-tab="wifi">WiFi</button>
+            <button class="tab-btn" data-tab="contact">Contact</button>
+            <button class="tab-btn" data-tab="custom">Custom</button>
+        </div>
+
+        <div class="tab-content">
+            <!-- URL QR Code -->
+            <div class="tab-pane active" id="url">
+                <h2>Generate URL QR Code</h2>
+                <form id="url-form">
+                    <div class="form-group">
+                        <label for="url-input">Website URL:</label>
+                        <input type="url" id="url-input" placeholder="https://example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="url-title">Title:</label>
+                        <input type="text" id="url-title" placeholder="My Website">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="generate-btn">Generate QR Code</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- WiFi QR Code -->
+            <div class="tab-pane" id="wifi">
+                <h2>Generate WiFi QR Code</h2>
+                <form id="wifi-form">
+                    <div class="form-group">
+                        <label for="wifi-ssid">Network Name (SSID):</label>
+                        <input type="text" id="wifi-ssid" placeholder="MyWiFiNetwork" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="wifi-password">Password:</label>
+                        <input type="password" id="wifi-password" placeholder="WiFi Password">
+                        <div class="show-password">
+                            <input type="checkbox" id="show-wifi-password">
+                            <label for="show-wifi-password">Show password</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="wifi-security">Security Type:</label>
+                        <select id="wifi-security">
+                            <option value="WPA">WPA/WPA2</option>
+                            <option value="WEP">WEP</option>
+                            <option value="nopass">No Password</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="wifi-title">Title:</label>
+                        <input type="text" id="wifi-title" placeholder="My WiFi">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="generate-btn">Generate QR Code</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Contact QR Code -->
+            <div class="tab-pane" id="contact">
+                <h2>Generate Contact QR Code</h2>
+                <form id="contact-form">
+                    <div class="form-group">
+                        <label for="contact-name">Name:</label>
+                        <input type="text" id="contact-name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-phone">Phone:</label>
+                        <input type="tel" id="contact-phone" placeholder="+1234567890">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-email">Email:</label>
+                        <input type="email" id="contact-email" placeholder="john@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-company">Company:</label>
+                        <input type="text" id="contact-company" placeholder="Company Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-job-title">Job Title:</label>
+                        <input type="text" id="contact-job-title" placeholder="Software Developer">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-website">Website:</label>
+                        <input type="url" id="contact-website" placeholder="https://example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-title">Title:</label>
+                        <input type="text" id="contact-title" placeholder="My Contact Info">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="generate-btn">Generate QR Code</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Custom QR Code -->
+            <div class="tab-pane" id="custom">
+                <h2>Generate Custom QR Code</h2>
+                <form id="custom-form">
+                    <div class="form-group">
+                        <label for="custom-content">Content:</label>
+                        <textarea id="custom-content" placeholder="Enter any text or data" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="custom-title">Title:</label>
+                        <input type="text" id="custom-title" placeholder="Custom QR Code">
+                    </div>
+                    <div class="form-group">
+                        <label for="custom-fg-color">Foreground Color:</label>
+                        <input type="color" id="custom-fg-color" value="#000000">
+                    </div>
+                    <div class="form-group">
+                        <label for="custom-bg-color">Background Color:</label>
+                        <input type="color" id="custom-bg-color" value="#FFFFFF">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="generate-btn">Generate QR Code</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="result-container" id="result-container" style="display: none;">
+            <h2>Your QR Code</h2>
+            <div class="qr-result">
+                <div class="qr-image-container">
+                    <img id="qr-image" src="" alt="Generated QR Code">
+                </div>
+                <div class="qr-actions">
+                    <button id="download-btn" class="action-btn">Download</button>
+                    <button id="new-qr-btn" class="action-btn">Create New QR Code</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 QR Code Generator. All rights reserved.</p>
+    </footer>
+
+    <script src="../js/script.js"></script>
+</body>
+</html>
