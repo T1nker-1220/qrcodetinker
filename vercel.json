@@ -30,6 +30,6 @@
   ],
   "env": {
     "ENVIRONMENT": "production",
-    "ALLOWED_ORIGINS": "https://your-production-url.com"
+    "ALLOWED_ORIGINS": "https://qrcodetinker.vercel.app"
   }
 }
