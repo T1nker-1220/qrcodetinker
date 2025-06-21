@@ -13,8 +13,8 @@ import tempfile
 import re
 from flask import Flask, request, jsonify, send_from_directory, Response
 from flask_cors import CORS
-from qr_generator import QRGenerator
-from qr_generator.utils import format_wifi_data, format_contact_data
+from .qr_generator import QRGenerator
+from .qr_generator.utils import format_wifi_data, format_contact_data
 
 # Environment configuration
 is_production = os.environ.get('ENVIRONMENT', 'development') == 'production'
