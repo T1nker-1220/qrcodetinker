@@ -17,10 +17,12 @@ class QRGenerator:
         """Initialize the QR code generator."""
         self.default_version = 1
         self.default_error_correction = qrcode.constants.ERROR_CORRECT_M
-        self.default_box_size = 10
+        self.default_box_size = 20  # Increased from 10 to 20 for larger QR codes
         self.default_border = 4
         self.default_fg_color = "black"
         self.default_bg_color = "white"
+        self.default_title_bg_color = "#42f593"  # Default blue background for title
+        self.default_title_text_color = "white"  # Default white text for title
 
     def generate(
         self,
@@ -164,49 +166,55 @@ class QRGenerator:
         Returns:
             The QR code image with the title added
         """
+        # Convert the image to RGB if it's not already
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
+        
         # Get the size of the original image
         qr_width, qr_height = img.size
         
-        # Create a new image with extra space for the title
-        title_height = 50  # Height for the title area
-        new_img = Image.new('RGB', (qr_width, qr_height + title_height), color='white')
+        # Define title area height - increased for better visibility
+        title_height = 80
         
-        # Convert the QR code image to RGB mode if it's not already
-        if img.mode != 'RGB':
-            img_rgb = img.convert('RGB')
-        else:
-            img_rgb = img
-            
-        # Paste the QR code onto the new image
-        new_img.paste(img_rgb, (0, title_height))
+        # Create a new blank image with space for the title
+        new_img = Image.new('RGB', (qr_width, qr_height + title_height), 'white')
         
-        # Add the title text
+        # Create a drawing context for the new image
         draw = ImageDraw.Draw(new_img)
         
-        # Try to use a default font, or fall back to the default
+        # Draw the title background
+        draw.rectangle([(0, 0), (qr_width, title_height)], fill=self.default_title_bg_color)
+        
+        # Copy the QR code to the bottom part of the new image
+        for y in range(qr_height):
+            for x in range(qr_width):
+                pixel = img.getpixel((x, y))
+                new_img.putpixel((x, y + title_height), pixel)
+        
+        # Try to use a larger font
+        font_size = 30
         try:
-            # Try to find a system font
-            font_size = 20
-            try:
-                # Try common system fonts
-                if os.name == 'nt':  # Windows
-                    font = ImageFont.truetype("arial.ttf", font_size)
-                else:  # Linux/Mac
-                    font = ImageFont.truetype("DejaVuSans.ttf", font_size)
-            except:
-                # Fall back to default
-                font = ImageFont.load_default()
-                
-            # Calculate text position to center it
+            # Try common system fonts
+            if os.name == 'nt':  # Windows
+                font = ImageFont.truetype("arial.ttf", font_size)
+            else:  # Linux/Mac
+                font = ImageFont.truetype("DejaVuSans.ttf", font_size)
+        except:
+            # Fall back to default
+            font = ImageFont.load_default()
+        
+        # Try to center the text
+        try:
+            # For newer Pillow versions
             text_width = draw.textlength(title, font=font)
-            text_position = ((qr_width - text_width) // 2, (title_height - font_size) // 2)
-            
-            # Draw the text
-            draw.text(text_position, title, fill='black', font=font)
-            
-        except Exception:
-            # If there's any error with fonts, use a simple approach
-            text_position = (10, 10)
-            draw.text(text_position, title, fill='black')
+        except AttributeError:
+            # Fallback for older Pillow versions
+            text_width = font.getsize(title)[0]
+        
+        text_x = (qr_width - text_width) // 2
+        text_y = (title_height - font_size) // 2  # Center vertically in title area
+        
+        # Draw the title
+        draw.text((text_x, text_y), title, fill=self.default_title_text_color, font=font)
         
         return new_img
